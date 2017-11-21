@@ -1,0 +1,107 @@
+
+
+
+/*==========================
+			GRID LAYOUT
+=============================*/
+
+.header { grid-area: header; }
+.main { grid-area: main; }
+.sidebar { grid-area: sidebar; }
+.footer { grid-area: footer; }
+
+
+
+.page {
+	margin: 0;
+
+	display: grid;
+	grid-template-columns: 250px 1fr;
+	grid-template-rows: 100px 1fr 30px;
+	grid-template-areas: "header header"
+                         "sidebar main"
+                         "footer footer";
+    height: 100vh;
+}
+
+
+
+.main {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	grid-template-rows: 2fr 1fr;
+	grid-template-areas: "icon1 icon1 icon3 icon3 icon2 icon2"
+                         "backButton backButton backButton nextButton nextButton nextButton"
+                         
+}
+	
+.icon1 { grid-area: icon1; }
+.icon2 { grid-area: icon2; }
+.icon3 { grid-area: icon3; }
+.nextButton { grid-area: nextButton; }
+.backButton { grid-area: backButton; }
+
+.nextButton {
+	align-self: center;
+	justify-self: start;
+}
+
+.backButton {
+	align-self: center;
+	justify-self: end;
+}
+
+main figure {
+	align-self: center;
+}
+
+body {
+	margin: 0;
+}
+footer h3 {
+	margin: 0;
+}
+
+/*==========================
+			COLORS 
+=============================*/
+
+.header {
+	background: #f4f3ec;
+}
+
+.sidebar {
+	background: #ece9de;
+}
+
+.main {
+	background: #d5dfd8;
+}
+
+.footer {
+	background: #f4f3ec;
+}
+
+/*==========================
+			TEXT 
+=============================*/
+
+body {
+	text-align: center;
+	font-family: 'PT Sans', sans-serif;
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: 100;  
+	font-size: 20px;
+}
+
+/*==========================
+			BUTTONS 
+=============================*/
+
+button {
+	height: 70px;
+	width: 220px;
+	font-family: 'PT Sans', sans-serif;
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 20px;
+}
