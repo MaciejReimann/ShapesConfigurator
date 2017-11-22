@@ -44,17 +44,17 @@ const controller = {
 		}
 	},
 	placeIcon: function(array, parentEl, h, w) {
-		// const iconsDiv =  document.createElement("DIV");
-		// iconsDiv.className = "icons";
-		// parentEl.appendChild(iconsDiv);
+		
 		for (let i = 0; i < array.length; i++) {
+		const iconsDiv =  document.createElement("DIV");
+		  iconsDiv.className = "icon"+(i+1)
+		  parentEl.appendChild(iconsDiv);
           const newFigure = document.createElement("FIGURE");
-          newFigure.className = "icon"+(i+1)
           const newImage = document.createElement("IMG");
           const newCaption = document.createElement("FIGCAPTION");
           newFigure.appendChild(newImage);
           newFigure.appendChild(newCaption);
-          parentEl.appendChild(newFigure);
+          iconsDiv.appendChild(newFigure);
               
           newImage.height = h;
           newImage.width = w;
@@ -64,6 +64,9 @@ const controller = {
            newFigure.addEventListener("click", function() {
             model.furnitureType[i].chosen = true;
             console.log(model.getChosenType())
+            controller.placeInputFields(iconsDiv, "inputHeight")
+            controller.placeInputFields(iconsDiv, "inputWidth")
+
             
             // view.render();
           });
@@ -76,6 +79,20 @@ const controller = {
     	button.textContent = textContent;   
     	button.addEventListener('click', (function(f) { return f })(foo) );
     },
+    placeInputFields: function(parentEl, className) {
+    	const newInputField = document.createElement('INPUT');
+    	parentEl.appendChild(newInputField);
+    	newInputField.className = className;
+    	if (className === "inputHeight") {
+    		newInputField.value = "Wysokość";
+    	};
+    	if (className === "inputWidth") {
+    		newInputField.value = "Szerokość";
+    	}
+    	
+
+
+    },
 
 }
 
@@ -83,12 +100,21 @@ const view = {
 	main:  document.getElementsByClassName('main')[0],
 
 	init: function() {
-		this.renderFirstPage();
+		this.renderPage.furnitureType();
 	},
-	renderFirstPage: function() {
-		controller.placeIcon(model.furnitureType, this.main, 200, 150);
-		controller.placeButton("backButton", "Wróć");
-		controller.placeButton("nextButton", "Dalej", view.renderSecondPage)
+	renderPage: {
+		furnitureType: function() {
+			controller.placeIcon(model.furnitureType, view.main, 200, 150);
+			// controller.placeButton("backButton", "Wróć");
+			// controller.placeButton("nextButton", "Dalej", view.renderPage.dimensionsInput)
+		},
+		dimensionsInput: function() {
+			controller.clearPage(view.main);
+			controller.placeInputFields(view.main);
+
+		},
+
+
 	},
 
 	
