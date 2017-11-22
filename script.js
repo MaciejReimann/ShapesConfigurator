@@ -1,26 +1,40 @@
 
 const model = {
 	init: function() {
+		this.addFeatures("height", 0);
+		this.addFeatures("width", 0);
+		this.addFeatures("iconNr", "")
 	},
+	// convertToString: function(x) {
+	// 	return toStr
 
-	furnitureType: [
+	furnitureType: {
+		low:
 		{
 			name: 'Zabudowa Niska',
 			src: "noun_1377456_cc.png",
 			chosen: false,
 		},
+		high:
 		{
 			name: 'Zabudowa Wysoka',
 			src: "noun_451715_cc.png",
 			chosen: false,
 		},
+		top:
 		{
 			name: 'Zabudowa Górna',
 			src: "noun_160008_cc.png",
 			chosen: false,
 		},
-	],
-	getChosenType: function() {		for (let i = 0; i < model.furnitureType.length; i++) {
+	},
+	addFeatures: function(newFeature,itsValue) {
+		for (let i = 0; i < model.furnitureType.length; i++) {
+			model.furnitureType[i][newFeature] = itsValue;
+		}
+	},
+	getChosenType: function() {		
+		for (let i = 0; i < model.furnitureType.length; i++) {
 			if (model.furnitureType[i].chosen  === true ) {
 				return model.furnitureType[i].name;
 			}
@@ -43,11 +57,10 @@ const controller = {
 			}
 		}
 	},
-	placeIcon: function(array, parentEl, h, w) {
-		
-		for (let i = 0; i < array.length; i++) {
+	placeIcon: function(obj, parentEl, h, w) {		
+		for (key in obj) {
 		const iconsDiv =  document.createElement("DIV");
-		  iconsDiv.className = "icon"+(i+1)
+		  iconsDiv.className = key;
 		  parentEl.appendChild(iconsDiv);
           const newFigure = document.createElement("FIGURE");
           const newImage = document.createElement("IMG");
@@ -58,18 +71,22 @@ const controller = {
               
           newImage.height = h;
           newImage.width = w;
-          newImage.src = array[i].src;
-          newCaption.textContent = array[i].name;
+          newImage.src = obj[key].src;
+          newCaption.textContent = obj[key].name;
 
-           newFigure.addEventListener("click", function() {
-            model.furnitureType[i].chosen = true;
-            console.log(model.getChosenType())
-            controller.placeInputFields(iconsDiv, "inputHeight")
-            controller.placeInputFields(iconsDiv, "inputWidth")
+           newFigure.addEventListener("click", (function(keyCopy) {
+           	if (obj[key].chosen !== true) {
+           		return function () {
+		            obj[keyCopy].chosen = true;
+		            
+		            controller.placeInputFields(iconsDiv, keyCopy, "inputHeight");
+		            controller.placeInputFields(iconsDiv, keyCopy, "inputWidth");
+	        	}
+        	};
 
             
             // view.render();
-          });
+          }) (key) );
 		}
 	},
 	placeButton: function(className, textContent, foo) {
@@ -79,15 +96,19 @@ const controller = {
     	button.textContent = textContent;   
     	button.addEventListener('click', (function(f) { return f })(foo) );
     },
-    placeInputFields: function(parentEl, className) {
+    placeInputFields: function(parentEl, parentClassName, className) {
     	const newInputField = document.createElement('INPUT');
     	parentEl.appendChild(newInputField);
     	newInputField.className = className;
     	if (className === "inputHeight") {
-    		newInputField.value = "Wysokość";
+    		// newInputField.value = "Wysokość:";
+    		parentEl.addEventListener("change", 
+    			console.log(parentClassName)
+    		// model.furnitureType[parentClassName].height = newInputField.value
+    			);
     	};
     	if (className === "inputWidth") {
-    		newInputField.value = "Szerokość";
+    		newInputField.value = "Szerokość:";
     	}
     	
 
@@ -104,7 +125,7 @@ const view = {
 	},
 	renderPage: {
 		furnitureType: function() {
-			controller.placeIcon(model.furnitureType, view.main, 200, 150);
+			controller.placeIcon(model.furnitureType, view.main, 150, 100);
 			// controller.placeButton("backButton", "Wróć");
 			// controller.placeButton("nextButton", "Dalej", view.renderPage.dimensionsInput)
 		},
