@@ -1,4 +1,3 @@
-
 const model = {
 	init: function() {
 		this.addFeatures("height", 0);
@@ -29,14 +28,14 @@ const model = {
 		},
 	},
 	addFeatures: function(newFeature,itsValue) {
-		for (let i = 0; i < model.furnitureType.length; i++) {
-			model.furnitureType[i][newFeature] = itsValue;
+		for (key in this.furnitureType) {
+			this.furnitureType[key][newFeature] = itsValue;
 		}
 	},
 	getChosenType: function() {		
-		for (let i = 0; i < model.furnitureType.length; i++) {
-			if (model.furnitureType[i].chosen  === true ) {
-				return model.furnitureType[i].name;
+		for (key in this.furnitureType) {
+			if (this.furnitureType[key].chosen  === true ) {
+				return model.furnitureType[key].name;
 			}
 		} 
 		return false;
@@ -74,46 +73,56 @@ const controller = {
           newImage.src = obj[key].src;
           newCaption.textContent = obj[key].name;
 
-           newFigure.addEventListener("click", (function(keyCopy) {
-           	if (obj[key].chosen !== true) {
-           		return function () {
-		            obj[keyCopy].chosen = true;
-		            
-		            controller.placeInputFields(iconsDiv, keyCopy, "inputHeight");
-		            controller.placeInputFields(iconsDiv, keyCopy, "inputWidth");
-	        	}
-        	};
-
-            
-            // view.render();
-          }) (key) );
+          	newFigure.addEventListener("click", (function(keyCopy) {
+          		return function () {
+		           	if (obj[keyCopy].chosen === false) {
+					    obj[keyCopy].chosen = true;
+					    controller.placeInputFields(iconsDiv, keyCopy, "inputHeight");
+					    controller.placeInputFields(iconsDiv, keyCopy, "inputWidth");
+			        	}
+		        	};
+		        
+	        }) (key) );
 		}
 	},
-	placeButton: function(className, textContent, foo) {
-		const button = document.createElement("BUTTON");
-		view.main.appendChild(button);
-		button.className = className;
-    	button.textContent = textContent;   
-    	button.addEventListener('click', (function(f) { return f })(foo) );
-    },
+	
     placeInputFields: function(parentEl, parentClassName, className) {
     	const newInputField = document.createElement('INPUT');
     	parentEl.appendChild(newInputField);
     	newInputField.className = className;
+    	
     	if (className === "inputHeight") {
-    		// newInputField.value = "Wysokość:";
-    		parentEl.addEventListener("change", 
-    			console.log(parentClassName)
-    		// model.furnitureType[parentClassName].height = newInputField.value
-    			);
+    		newInputField.value = "Wysokość:";
+    		newInputField.focus();
+    		parentEl.addEventListener("change", function() {
+    			model.furnitureType[parentClassName].height = newInputField.value
+    		});
     	};
     	if (className === "inputWidth") {
     		newInputField.value = "Szerokość:";
-    	}
+    		parentEl.addEventListener("change", function() {
+    			model.furnitureType[parentClassName].height = newInputField.value
+    		});
+    	};
+    	newInputField.addEventListener("keyup", function(event) {
+    		if (event.keyCode === 13 && newInputField.nextElementSibling === null) {
+        		view.renderPage.placeBackNextButtons("backButton", "Wróć", (function (f) {
+        			return f
+        		}) (view.renderPage.first ) ) // IT WOULD BE GOOD TO CHANGE IT FOR ;PREVIOUS
+        		view.renderPage.placeBackNextButtons("nextButton", "Dalej", (function (f) {
+        			return f
+        		}) (view.renderPage.third ) ) //AND THIS FOR NEXT
+    		};
+    		if (event.keyCode === 13) {
+        		newInputField.nextElementSibling.focus()
+        	};
+        	
+		});
     	
-
-
     },
+    showFinishes: function() {
+
+    }
 
 }
 
@@ -121,21 +130,44 @@ const view = {
 	main:  document.getElementsByClassName('main')[0],
 
 	init: function() {
+		controller.clearPage(view.main);
 		this.renderPage.furnitureType();
 	},
+	// A GENERAL VIEW FUNCTION FOR JUMBING BACK AND FORTH PAGES -> CREATES AN ARRAY OUT OF RENDERPAGE. FUNCTIONS 
+	// AND THEN ITERATES THROUGN IT RETURNNING NEXT OR PREVIOUS ARRAY ELEMENTS [PAGES]
 	renderPage: {
+		first: function() {
+			view.renderPage.furnitureType();
+		},
+		second: function() {
+			view.renderPage.first()
+			view.renderPage.dimensionsInput();
+		},
+		third: function() {
+			view.renderPage.second()
+			view.renderPage.finishings()
+		},
+		placeBackNextButtons: function(className, textContent, foo) {
+			const button = document.createElement("BUTTON");
+			view.main.appendChild(button);
+			button.className = className;
+	    	button.textContent = textContent;
+	    	button.focus();
+	    	button.addEventListener('click', (function(f) { return f })(foo) );
+    	},
 		furnitureType: function() {
 			controller.placeIcon(model.furnitureType, view.main, 150, 100);
 			// controller.placeButton("backButton", "Wróć");
-			// controller.placeButton("nextButton", "Dalej", view.renderPage.dimensionsInput)
+			// controller.placeButton("nextButton", "Dalej", funct)
 		},
 		dimensionsInput: function() {
 			controller.clearPage(view.main);
 			controller.placeInputFields(view.main);
-
 		},
-
-
+		finishings: function() {
+			controller.clearPage(view.main);
+			controller.showFinishes(view.main);
+		}
 	},
 
 	
