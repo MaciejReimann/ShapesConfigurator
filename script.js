@@ -79,6 +79,7 @@ const controller = {
 					    obj[keyCopy].chosen = true;
 					    controller.placeInputFields(iconsDiv, keyCopy, "inputHeight");
 					    controller.placeInputFields(iconsDiv, keyCopy, "inputWidth");
+					    controller.navigate(2);
 			        	}
 		        	};
 		        
@@ -90,7 +91,7 @@ const controller = {
     	const newInputField = document.createElement('INPUT');
     	parentEl.appendChild(newInputField);
     	newInputField.className = className;
-    	
+    	parentEl.firstElementChild.focus();
     	if (className === "inputHeight") {
     		newInputField.value = "Wysokość:";
     		newInputField.focus();
@@ -106,9 +107,9 @@ const controller = {
     	};
     	newInputField.addEventListener("keyup", function(event) {
     		if (event.keyCode === 13 && newInputField.nextElementSibling === null) {
-        		view.renderPage.placeBackNextButtons("backButton", "Wróć", (function (f) {
-        			return f
-        		}) (view.renderPage.first ) ) // IT WOULD BE GOOD TO CHANGE IT FOR ;PREVIOUS
+        		// view.renderPage.placeBackNextButtons("backButton", "Wróć", (function (f) {
+        		// 	return f
+        		// }) (parentEl.firstElementChild.focus ) ) // IT WOULD BE GOOD TO CHANGE IT FOR ;PREVIOUS
         		view.renderPage.placeBackNextButtons("nextButton", "Dalej", (function (f) {
         			return f
         		}) (view.renderPage.third ) ) //AND THIS FOR NEXT
@@ -122,30 +123,55 @@ const controller = {
     },
     showFinishes: function() {
 
-    }
+    },
+    navigate: function(x) {
+    	for ( let i = 1; i < x+1; i++ ) {
+    		const newDiv = document.createElement('DIV');
+    		view.sidebar.appendChild(newDiv);
+    		if (i === 1) {
+    			newDiv.textContent = 'Wybierz rodzaj zabudowy'
+    		};
+    		if (i === 2) {
+    			newDiv.textContent = 'Podaj wymiary dla każdegorodzaju zabudowy'
+    		};
+    		if (i === 3) {
+    			newDiv.textContent = 'Wybierz fronty'
+    		};
+    		if (i === 3) {
+    			newDiv.textContent = 'Podaj liczbę szafek narożnych'
+    		};
+    		if (i === 3) {
+    			newDiv.textContent = 'Wybierz akcesoria'
+    		};
+    		
+    	}
+    },
 
 }
 
 const view = {
 	main:  document.getElementsByClassName('main')[0],
-
+	sidebar: document.getElementsByClassName('sidebar')[0],
 	init: function() {
-		controller.clearPage(view.main);
-		this.renderPage.furnitureType();
+		
+		this.renderPage.first();
 	},
 	// A GENERAL VIEW FUNCTION FOR JUMBING BACK AND FORTH PAGES -> CREATES AN ARRAY OUT OF RENDERPAGE. FUNCTIONS 
 	// AND THEN ITERATES THROUGN IT RETURNNING NEXT OR PREVIOUS ARRAY ELEMENTS [PAGES]
 	renderPage: {
 		first: function() {
 			view.renderPage.furnitureType();
+			controller.navigate(1)
 		},
 		second: function() {
 			view.renderPage.first()
 			view.renderPage.dimensionsInput();
+			controller.navigate(2)
 		},
 		third: function() {
 			view.renderPage.second()
 			view.renderPage.finishings()
+			controller.navigate(3)
 		},
 		placeBackNextButtons: function(className, textContent, foo) {
 			const button = document.createElement("BUTTON");
